@@ -20,6 +20,8 @@ import Auth from "layouts/Auth.js";
 import { getDatosUsuario, setDatosUsuario } from "../../function/localstore/storeUsuario";
 import axios from "axios";
 import { useRouter } from 'next/router';
+import Swal from 'sweetalert2'
+import 'animate.css';
 
 function Login() {
   const router = useRouter()
@@ -32,17 +34,28 @@ function Login() {
   
   const { login, setReloadUser } = useAuth();
   const [user, setuser] = useState({
-    username:null,
+    usuario:null,
     password:null,
+    status:'validar'
   });
   
   const AuthValivation=async()=>{
-    if(user.username !== null && user.password !== null){
+    if(user.usuario !== null && user.password !== null){
       const { data } = await axios.post('/api/login',user)
       if(data.success){
         setDatosUsuario(data)
         login(data)
         setReloadUser(data.success)
+      }else{
+        Swal.fire({
+          title: data.msg,
+          showClass: {
+              popup: 'animate__animated animate__fadeInDown'
+          },
+          hideClass: {
+              popup: 'animate__animated animate__fadeOutUp'
+          }
+      })
       }
     }
   }
@@ -76,7 +89,7 @@ function Login() {
                   </InputGroupAddon>
                   <Input
                     onChange={(e)=>handelChange(e)}
-                    name="username"
+                    name="usuario"
                     placeholder="username"
                     password
                     autoComplete="new-email"
